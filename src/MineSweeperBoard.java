@@ -204,7 +204,6 @@ public class MineSweeperBoard extends JPanel implements MouseListener {
       }
    }
 
-
    /*
     * The following four methods are required for a MouseListener, but
     * are not used in this program.
