@@ -43,12 +43,13 @@ public class MineSweeperBoard extends JPanel implements MouseListener {
 
    private JLabel message;  // Displays a message to the user.  Use message.setText(string) to change the message.
 
-   private ArrayList<Integer> mineLocations;
+   private ArrayList<Box> boxes = new ArrayList<Box>();
 
 
    /**
     *  Constructor.  Does some setup and calls newGame() to start the first game.
     */
+
    public MineSweeperBoard() {
       setPreferredSize( new Dimension( 30 * BOARD_SIZE, 30 * BOARD_SIZE ) );
       addMouseListener(this);
@@ -122,10 +123,11 @@ public class MineSweeperBoard extends JPanel implements MouseListener {
 
             int position = (row * 10) + col;
 
-            if (mineLocations.contains(position)) {
-               g.drawString("X",x1 + 6,y1 + 21);
-//               Image img = new Image();
-//               g.drawImage(img, x1 + 6, y1 + 21);
+            /* Check for mine containing position */
+            for (int i = 0; i < boxes.size(); i++) {
+               if (boxes.get(i).getPosition() == position) {
+                  g.drawString("X",x1 + 6,y1 + 21);
+               }
             }
 
          }
@@ -139,6 +141,8 @@ public class MineSweeperBoard extends JPanel implements MouseListener {
       ArrayList<Integer> numbers = new ArrayList<Integer>();
       Random randomGenerator = new Random();
 
+      boxes = new ArrayList<Box>();
+
       while (numbers.size() < returnCount) {
 
          int random = randomGenerator.nextInt((count - 0) + 1) + 0; /* Board size (example: 100) */
@@ -149,14 +153,11 @@ public class MineSweeperBoard extends JPanel implements MouseListener {
 
       }
 
-      int finalArr[] = new int[returnCount];
+      System.out.println("Mine Positions: " + numbers);
 
       for (int i = 0; i < numbers.size(); i++) {
-         finalArr[i] = numbers.get(i);
+         boxes.add(new Box("X", numbers.get(i), (int) Math.pow(BOARD_SIZE, 2)));
       }
-
-      System.out.println("Mine Positions: " + numbers);
-      mineLocations = numbers;
 
    }
 
@@ -169,8 +170,9 @@ public class MineSweeperBoard extends JPanel implements MouseListener {
 
       /* Figure out the row and column, based on the (x,y) point where the user clicked. */
 
-      double squareWidth = (double)getWidth() / BOARD_SIZE;
-      double squareHeight = (double)getHeight() / BOARD_SIZE;
+      double squareWidth = (double) getWidth() / BOARD_SIZE;
+      double squareHeight = (double) getHeight() / BOARD_SIZE;
+
       row = (int)( evt.getY() / squareHeight );
       col = (int)( evt.getX() / squareWidth );
 
@@ -192,6 +194,14 @@ public class MineSweeperBoard extends JPanel implements MouseListener {
       /* Finally, make sure that the board is redrawn to show the effect of this move. */
 
       repaint();
+   }
+
+   protected void setBoxFlag(int pos) {
+      for (int i = 0; i < boxes.size(); i++) {
+         if (pos == boxes.get(i).getPosition()) {
+            boxes.get(i).setFlag();
+         }
+      }
    }
 
 
